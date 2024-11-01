@@ -37,48 +37,76 @@ class StudentController extends Controller
         return response()->json($data, 201);
     }
 
-    // public function update(Request $request, $id) {
-    //     $student = Student::find($id);
+    public function update(Request $request, $id) {
+        $student = Student::find($id);
 
-    //     if(!$student) {
-    //         $data = [
-    //             "message"=> "Student not found",
-    //         ];
+        if(!$student) {
+            $data = [
+                'nama' => $request->nama ?? $student->nama,
+                'nim' => $request->nim ?? $student->nim,
+                'email' => $request->email ?? $student->email,
+                'jurusan' => $request->jurusan ?? $student->jurusan
+            ];
+            $student->update($input);
 
-    //         return response()->json($data, 404);
-    //     }
+            $data = [
+                'message' => 'Student is Update',
+                'data' => $student 
+            ];
+
+            return response()->json($data, 200);
+        }
+        else {
+            $data = [
+                'message'=> 'Student not Found'
+            ];
+            return response()->json($data, 404);
+        }
+    }   
+    public function destroy($id) {
+    
+            $student = Student::find($id);
+            if($student) {
+                $student->delete();
+                $data = [
+                    "message"=> "Student is deleted",
+                ];
+                
+                return response()->json($data, 200);
+            }
+            else {
+                $data = [
+                    "message"=> "Student is deleted",
+                ];
         
+                    return response()->json($data, 404);
+                }
+       
+        }            
 
-    //     $input = [
-    //         "nama"=> $request->nama ?? $student->nama,
-    //         "nim"=> $student->nim ?? $student->nim,
-    //         "email"=> $request->email ?? $student->email,
-    //         "jurusan"=> $student->jurusan ?? $student->jurusan,
-    //     ];
-
-    //     $student->update($input);
+    public function show($id) {
+    
+        $student = Student::find($id);
+        if($student) {
+            
+            $data = [
+                "message"=> "Get Detail Student",
+                "data" => $student
+            ];
+            
+            return response()->json($data, 200);
+        }
         
-    //     $data = [
-    //         "message"=> "Student is updated",
-    //         "data"=> $student,
-    //     ];
-
-    //     return response ()->json($data, 200);
-    // }
-
-    // public function destroy() {
-
-    //     $student = Student::find
-    //     if(!$student) {
-    //         $data = [
-    //             "message"=> "Student not found",
-    //         ];
-
-    //          return response()->json($data, 404);
-    //     }
-
-    //     return "Delete students Data ...";
-    // }
-
-
+        else {
+            $data = [
+                "message"=> "Student not Found",
+            ];
+    
+                return response()->json($data, 404);
+            }
+    }
+    
+    
 }
+        
+        
