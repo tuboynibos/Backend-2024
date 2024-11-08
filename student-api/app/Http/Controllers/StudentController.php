@@ -4,12 +4,25 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Student;
+use Illuminate\Support\Facades\Validator;
 
 class StudentController extends Controller
 {
     public function index() {
+
+        
         
         $students = Student::all();
+        if ($students){
+            $data= [
+                "msg"=> "Get All Student",
+                "data" => $students,
+            ];
+        }else {
+            $data = [
+                "msg" => "Student is empty",
+            ];
+        }
 
         $data = [
             "message" => "Get All Students",
@@ -17,11 +30,34 @@ class StudentController extends Controller
         ];
 
         return response()->json($data, 200);
-    }
-
+    } 
+    
     public function store(Request $request) {
-       $input = [
-            'nama' => $request->nama,
+       $validator = Validator::make($request->all(), [
+        'name' => 'required',
+        'nim' => 'numeric|required',
+        'email' => 'email|required',
+        'jurusan'=> 'required'
+       ]);
+
+       if ($validator->fails()){
+        return response()->json([
+            'massage' => 'Validation errors',
+            'errors' => $validator->errors()
+        ], 422);
+       }
+
+       $student = Student::create($request->all());
+
+       $data = [
+        'massage' => 'Student is created successfully',
+        'data'=> $student,
+       ];
+
+       return response()->json($data, 2011);
+       
+        $input = [
+            'name' => $request->nama,
             'nim' => $request->nim,
             'email' => $request->email,
             'jurusan' => $request->jurusan,
@@ -42,7 +78,7 @@ class StudentController extends Controller
 
         if(!$student) {
             $data = [
-                'nama' => $request->nama ?? $student->nama,
+                'name' => $request->nama ?? $student->nama,
                 'nim' => $request->nim ?? $student->nim,
                 'email' => $request->email ?? $student->email,
                 'jurusan' => $request->jurusan ?? $student->jurusan
